@@ -1,0 +1,4 @@
+build/
+dist/
+pyengine3.egg-info/
+*.pyc

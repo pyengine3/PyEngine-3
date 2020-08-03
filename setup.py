@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
-import pyengine3
 
 setup(
     name="pyengine3",
-    version=pyengine3.__version__,
+    version="1.0.0",
     packages=find_packages(),
     author="LavaPower",
     author_email="lavapower84@gmail.com",

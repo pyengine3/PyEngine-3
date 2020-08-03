@@ -1,7 +1,9 @@
-from enum import Enum
+from pyglet.window import Window
 
-class WindowStyle(Enum):
-    BORDERLESS = 1
-    DEFAULT = 2
-    DIALOG = 3
-    TOOL = 4
+__all__ = ["WindowStyle"]
+
+class WindowStyle:
+    BORDERLESS = Window.WINDOW_STYLE_BORDERLESS
+    DEFAULT = None
+    DIALOG = Window.WINDOW_STYLE_DIALOG
+    TOOL = Window.WINDOW_STYLE_TOOL

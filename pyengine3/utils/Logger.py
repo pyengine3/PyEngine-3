@@ -1,6 +1,7 @@
 import logging
 import logging.handlers
 
+__all__ = ["logger", "Logger"]
 
 class Logger(logging.Logger):
     def __init__(self, name, stream=None, file=None):

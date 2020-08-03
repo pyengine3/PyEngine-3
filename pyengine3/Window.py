@@ -1,40 +1,58 @@
 import pyglet
 
-from pyengine3.utils import WindowStyle
+from pyengine3.utils import WindowStyle, MouseCursors
+from pyengine3.input.Input import Input
 
-class Window(pyglet.window.Window):
+class Window:
     def __init__(self, title: str = "PyEngine3 Window", width: int = 640, height: int = 480, resizable: bool = False, style: WindowStyle = WindowStyle.DEFAULT,
         fullscreen: bool = False, visible: bool = True, vsync: bool = True, debug: bool = False, ups: int = 60):
-        if style == WindowStyle.DEFAULT:
-            style = None
-        elif style == WindowStyle.DIALOG:
-            style = pyglet.window.Window.WINDOW_STYLE_DIALOG
-        elif style == WindowStyle.TOOL:
-            style = pyglet.window.Window.WINDOW_STYLE_TOOL
-        elif style == WindowStyle.BORDERLESS:
-            style = pyglet.window.Window.WINDOW_STYLE_BORDERLESS
-        else:
-            raise ValueError("Style must be a WindowStyle")
+        self.__window = pyglet.window.Window(width, height, title, resizable, style, fullscreen, visible, vsync)
+        self.__debug = debug
+        self.__fps_label = pyglet.text.Label("FPS : {}".format(int(pyglet.clock.get_fps())), x = 10, y = 10)
+        self.__fps_timer = 0
+        self.__ups = ups
+        self.__input = Input(self.__window)
 
-        super(Window, self).__init__(width, height, title, resizable, style, fullscreen, visible, vsync)
-        self.debug = debug
-        self.fps_label = pyglet.text.Label("FPS : {}".format(int(pyglet.clock.get_fps())), x = 10, y = 10)
-        self.fps_timer = 0
-        self.ups = ups
         pyglet.clock.schedule_interval(self.update, 1.0/ups)
 
+        @self.__window.event
+        def on_draw():
+            pyglet.clock.tick()
+            self.__window.clear()
+            if self.__debug:
+                self.__fps_label.draw()
+
     def update(self, dt):
-        if self.debug:
-            if self.fps_timer <= 0:
-                self.fps_label.text = "FPS : {}".format(int(pyglet.clock.get_fps()))
-                self.fps_timer = self.ups / 2
-            self.fps_timer -= 1
-        
-    def on_draw(self):
-        pyglet.clock.tick()
-        self.clear()
-        if self.debug:
-            self.fps_label.draw()
+        if self.__debug:
+            if self.__fps_timer <= 0:
+                self.__fps_label.text = "FPS : {}".format(int(pyglet.clock.get_fps()))
+                self.__fps_timer = self.__ups / 2
+            self.__fps_timer -= 1
 
     def run(self):
         pyglet.app.run()
+
+    def get_input(self) -> Input:
+        return self.__input
+
+    def set_mouse_visible(self, visible: bool):
+        self.__window.set_mouse_visible(visible)
+    
+    def set_cursor(self, cursor: MouseCursors):
+        cursor = self.__window.get_system_mouse_cursor(cursor)
+        self.__window.set_mouse_cursor(cursor)
+
+    def set_cursor_image(self, cursor: str):
+        cursor = pyglet.window.ImageMouseCursor(pyglet.image.load(cursor), 16, 8)
+        self.__window.set_mouse_cursor(cursor)
+
+    def set_exclusive_mouse(self, exclusive: bool):
+        self.__window.set_exclusive_mouse(exclusive)
+        
+    def set_ups(self, ups: int = 60):
+        self.__ups = ups
+        pyglet.clock.unschedule(self.update)
+        pyglet.clock.schedule_interval(self.update, 1.0/ups)
+    
+    def get_ups(self) -> int:
+        return self.__ups

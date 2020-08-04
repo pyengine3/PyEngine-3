@@ -1,6 +1,6 @@
 import pyglet
 
-from pyengine3.utils import WindowStyle, MouseCursors
+from pyengine3.utils import WindowStyle, MouseCursors, Vec2
 from pyengine3.input.Input import Input
 
 class Window:
@@ -32,8 +32,11 @@ class Window:
     def run(self):
         pyglet.app.run()
 
-    def get_input(self) -> Input:
-        return self.__input
+    def maximize(self):
+        self.__window.maximize()
+    
+    def minimize(self):
+        self.__window.minimize()
 
     def set_mouse_visible(self, visible: bool):
         self.__window.set_mouse_visible(visible)
@@ -48,11 +51,45 @@ class Window:
 
     def set_exclusive_mouse(self, exclusive: bool):
         self.__window.set_exclusive_mouse(exclusive)
+
+    def set_exclusive_keyboard(self, exclusive: bool):
+        self.__window.set_exclusive_keyboard(exclusive)
         
-    def set_ups(self, ups: int = 60):
+    def set_ups(self, ups: int):
         self.__ups = ups
         pyglet.clock.unschedule(self.update)
         pyglet.clock.schedule_interval(self.update, 1.0/ups)
+
+    def set_title(self, title: str):
+        self.__window.set_caption(title)
+
+    def set_fullscreen(self, fullscreen: bool):
+        self.__window.set_fullscreen(fullscreen)
+    
+    def set_position(self, pos: Vec2):
+        self.__window.set_location(pos.x, pos.y)
+    
+    def set_size(self, size: Vec2):
+        self.__window.set_size(size.x, size.y)
+    
+    def set_visible(self, visible: bool):
+        self.__window.set_visible(visible)
+
+    def get_input(self) -> Input:
+        return self.__input
     
     def get_ups(self) -> int:
         return self.__ups
+
+    def get_size(self) -> Vec2:
+        return Vec2.from_tuple(self.__window.get_size())
+    
+    def get_position(self) -> Vec2:
+        return Vec2.from_tuple(self.__window.get_location())
+
+    def get_title(self) -> str:
+        return self.__window.caption
+    
+    def get_fullscreen(self) -> bool:
+        return self.__window.fullscreen
+    
